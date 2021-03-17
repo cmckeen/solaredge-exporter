@@ -14,6 +14,11 @@ func AddMetrics() map[string]*prometheus.Desc {
 		"Current power output",
 		[]string{}, prometheus.Labels{},
 	)
+	APIMetrics["Lifetime Energy"] = prometheus.NewDesc(
+		prometheus.BuildFQName("solaredge", "site", "lifetime_energy"),
+		"Lifetime energy",
+		[]string{}, prometheus.Labels{},
+	)
 
 	return APIMetrics
 }
@@ -21,6 +26,6 @@ func AddMetrics() map[string]*prometheus.Desc {
 // processMetrics - processes the response data and sets the metrics using it as a source
 func (e *Exporter) processMetrics(data solaredge.SiteOverview, ch chan<- prometheus.Metric) error {
 	ch <- prometheus.MustNewConstMetric(e.APIMetrics["Power"], prometheus.GaugeValue, data.CurrentPower.Power)
-
+	ch <- prometheus.MustNewConstMetric(e.APIMetrics["Lifetime Energy"], prometheus.GaugeValue, data.LifetimeData.Energy)
 	return nil
 }

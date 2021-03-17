@@ -1,10 +1,11 @@
 package exporter
 
 import (
+	"time"
+
+	"github.com/elliott-davis/solaredge-go/solaredge"
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
-	"github.com/elliott-davis/solaredge-go/solaredge"
-	"time"
 )
 
 // Describe - loops through the API metrics and passes them to prometheus.Describe
@@ -25,7 +26,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	if now.After(sevenPM) && now.Before(sevenAM) {
 		siteOverview := solaredge.SiteOverview{}
 		siteOverview.CurrentPower.Power = 0.0
+		siteOverview.LifetimeData.Energy = 0.0
 		err := e.processMetrics(siteOverview, ch)
+
 		if err != nil {
 			log.Error("Error Processing Metrics", err)
 			return
